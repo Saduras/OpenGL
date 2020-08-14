@@ -15,6 +15,10 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
+
 /* Check documentation at http://docs.gl */
 
 int main(void)
@@ -26,6 +30,7 @@ int main(void)
 		return -1;
 
 	// Set profile
+	const char* glsl_version = "#version 330";
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -50,10 +55,10 @@ int main(void)
 
 	{
 		float positions[] = {
-			100.0f, 100.0f, 0.0f, 0.0f, // 0
-			200.0f, 100.0f, 1.0f, 0.0f, // 1
-			200.0f, 200.0f, 1.0f, 1.0f, // 2
-			100.0f, 200.0f, 0.0f, 1.0f, // 3
+			  0.0f,   0.0f, 0.0f, 0.0f, // 0
+			100.0f,   0.0f, 1.0f, 0.0f, // 1
+			100.0f, 100.0f, 1.0f, 1.0f, // 2
+			  0.0f, 100.0f, 0.0f, 1.0f, // 3
 		};
 
 		unsigned int indicies[] = {
@@ -76,14 +81,10 @@ int main(void)
 
 		glm::mat4 proj = glm::ortho(0.0f, 640.0f, 0.0f, 480.0f, -1.0f, 1.0f);
 		glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100.0f, 0.0f, 0.0f));
-		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(100.0f, 100.0f, 0.0f));
-
-		glm::mat4 mvp = proj * view * model;
 
 		Shader shader("res/shader/Basic.shader");
 		shader.Bind();
 		shader.SetUniform4f("u_Color", 0.2f, 0.3f, 0.8f, 1.0f);
-		shader.SetUniformMat4f("u_MVP", mvp);
 
 		Texture texture("res/textures/pop-me.png");
 		texture.Bind();
@@ -95,7 +96,26 @@ int main(void)
 		shader.Unbind();
 
 		Renderer renderer;
+		
+		// Setup ImGUI
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO(); (void)io;
 
+		// Setup Dear ImGui style
+		ImGui::StyleColorsDark();
+		//ImGui::StyleColorsClassic();
+
+		// Setup Platform/Renderer bindings
+		ImGui_ImplGlfw_InitForOpenGL(window, true);
+		ImGui_ImplOpenGL3_Init(glsl_version);
+
+		// Our ImGUI state
+		bool show_demo_window = true;
+		bool show_another_window = false;
+		ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+		glm::vec3 translation(100.0f, 100.0f, 0.0f);
 		float r = 0.0f;
 		float increment = 0.05f;
 
@@ -104,11 +124,24 @@ int main(void)
 			/* Render here */
 			renderer.Clear();
 
-			// All the things that need to be done ever frame if we draw multiple objects
+			// Start the Dear ImGui frame
+			ImGui_ImplOpenGL3_NewFrame();
+			ImGui_ImplGlfw_NewFrame();
+			ImGui::NewFrame();
+
+			// Debug ImGUI stuff
+			{
+				ImGui::SliderFloat3("Translation", &translation.x, 0.0f, 640.0f);
+				ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+			}
+
+			// Calculate model matrix
+			glm::mat4 model = glm::translate(glm::mat4(1.0f), translation);
+			glm::mat4 mvp = proj * view * model;
+
 			shader.Bind();
 			shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
-
-			renderer.Draw(va, ib, shader);
+			shader.SetUniformMat4f("u_MVP", mvp);
 
 			if (r > 1.0f) {
 				increment = -0.05f;
@@ -118,6 +151,11 @@ int main(void)
 			}
 			r += increment;
 
+			// Rendering
+			renderer.Draw(va, ib, shader);
+			ImGui::Render();
+			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 			/* Swap front and back buffers */
 			glfwSwapBuffers(window);
 
@@ -126,6 +164,12 @@ int main(void)
 		}
 		// let IndexBuffer and VertexBuffer run out of scope for clean up before terminating OpenGL context 
 	}
+
+	// Cleanup
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+
 	glfwTerminate();
 	return 0;
 }
