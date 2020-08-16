@@ -20,28 +20,9 @@
 #include "imgui/imgui_impl_opengl3.h"
 
 #include "tests/TestClearColor.h"
+#include "tests/Test.h"
 
 /* Check documentation at http://docs.gl */
-
-static test::Test* currentTest = nullptr;
-
-static void RenderTestSelector()
-{
-	ImGui::Begin("Test Selector");
-	if (ImGui::Button("None")) {
-		if (currentTest != nullptr) {
-			delete currentTest;
-		}
-		currentTest = nullptr;
-	}
-	if (ImGui::Button("ClearColor")) {
-		if (currentTest != nullptr) {
-			delete currentTest;
-		}
-		currentTest = new test::TestClearColor();
-	}
-	ImGui::End();
-}
 
 int main(void)
 {
@@ -73,6 +54,12 @@ int main(void)
 		std::cout << "Error Init GLEW" << std::endl;
 	}
 
+	test::Test* currentTest = nullptr;
+	test::TestMenu* testMenu = new test::TestMenu(currentTest);
+	currentTest = testMenu;
+
+	testMenu->RegisterTest<test::TestClearColor>("Clear color");
+
 	GLCall(std::cout << glGetString(GL_VERSION) << std::endl);
 
 	{
@@ -96,24 +83,25 @@ int main(void)
 		
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(window)) {
+			GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
 			renderer.Clear();
-
-			if (currentTest != nullptr) {
-				currentTest->OnUpdate(0.0f);
-				currentTest->OnRender();
-			}
 
 			// Start the Dear ImGui frame
 			ImGui_ImplOpenGL3_NewFrame();
 			ImGui_ImplGlfw_NewFrame();
 			ImGui::NewFrame();
 
-			if (currentTest != nullptr) {
+			if (currentTest) {
+				currentTest->OnUpdate(0.0f);
+				currentTest->OnRender();
+				ImGui::Begin("Test");
+				if (currentTest != testMenu && ImGui::Button("<-")) {
+					delete currentTest;
+					currentTest = testMenu;
+				}
 				currentTest->OnImGuiRender();
+				ImGui::End();
 			}
-
-			// Render Menu here
-			RenderTestSelector();
 
 			ImGui::Render();
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -122,7 +110,11 @@ int main(void)
 
 			glfwPollEvents();
 		}
-		// let IndexBuffer and VertexBuffer run out of scope for clean up before terminating OpenGL context 
+		
+		delete currentTest;
+		if (currentTest != testMenu)
+			delete testMenu;
+
 	}
 
 	// Cleanup
