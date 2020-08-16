@@ -27,7 +27,6 @@ void Renderer::Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& 
     shader.Bind();
     va.Bind();
     ib.Bind();
-    //shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
 
     GLCall(glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, nullptr));
 }
