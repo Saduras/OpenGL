@@ -23,6 +23,26 @@
 
 /* Check documentation at http://docs.gl */
 
+static test::Test* currentTest = nullptr;
+
+static void RenderTestSelector()
+{
+	ImGui::Begin("Test Selector");
+	if (ImGui::Button("None")) {
+		if (currentTest != nullptr) {
+			delete currentTest;
+		}
+		currentTest = nullptr;
+	}
+	if (ImGui::Button("ClearColor")) {
+		if (currentTest != nullptr) {
+			delete currentTest;
+		}
+		currentTest = new test::TestClearColor();
+	}
+	ImGui::End();
+}
+
 int main(void)
 {
 	GLFWwindow* window;
@@ -73,22 +93,27 @@ int main(void)
 		// Setup Platform/Renderer bindings
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui_ImplOpenGL3_Init(glsl_version);
-
-		test::TestClearColor test;
 		
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(window)) {
 			renderer.Clear();
 
-			test.OnUpdate(0.0f);
-			test.OnRender();
+			if (currentTest != nullptr) {
+				currentTest->OnUpdate(0.0f);
+				currentTest->OnRender();
+			}
 
 			// Start the Dear ImGui frame
 			ImGui_ImplOpenGL3_NewFrame();
 			ImGui_ImplGlfw_NewFrame();
 			ImGui::NewFrame();
 
-			test.OnImGuiRender();
+			if (currentTest != nullptr) {
+				currentTest->OnImGuiRender();
+			}
+
+			// Render Menu here
+			RenderTestSelector();
 
 			ImGui::Render();
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
