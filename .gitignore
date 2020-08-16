@@ -4,3 +4,5 @@
 OpenGL/Debug/
 
 bin/
+
+OpenGL/imgui.ini
