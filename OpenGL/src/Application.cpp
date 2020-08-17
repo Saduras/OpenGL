@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
+#include <chrono>
 
 #include "Renderer.h"
 
@@ -84,9 +85,18 @@ int main(void)
 		// Setup Platform/Renderer bindings
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui_ImplOpenGL3_Init(glsl_version);
+
+		std::chrono::steady_clock::time_point currentTimestamp = std::chrono::steady_clock::now();
+		std::chrono::steady_clock::time_point lastTimestamp = currentTimestamp;
+		float deltaTime = 0.0f;
 		
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(window)) {
+			// Get deltaTime
+			currentTimestamp = std::chrono::steady_clock::now();
+			deltaTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTimestamp - lastTimestamp).count() / 1000.0f;
+			lastTimestamp = currentTimestamp;
+
 			GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
 			renderer.Clear();
 
@@ -96,7 +106,7 @@ int main(void)
 			ImGui::NewFrame();
 
 			if (currentTest) {
-				currentTest->OnUpdate(0.0f);
+				currentTest->OnUpdate(deltaTime);
 				currentTest->OnRender();
 				ImGui::Begin("Test");
 				if (currentTest != testMenu && ImGui::Button("<-")) {
