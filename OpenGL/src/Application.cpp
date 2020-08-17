@@ -21,6 +21,7 @@
 
 #include "tests/TestClearColor.h"
 #include "tests/TestTexture2D.h"
+#include "tests/TestUnlit3DCube.h"
 #include "tests/Test.h"
 
 /* Check documentation at http://docs.gl */
@@ -61,6 +62,7 @@ int main(void)
 
 	testMenu->RegisterTest<test::TestClearColor>("Clear color");
 	testMenu->RegisterTest<test::TestTexture2D>("2D Texture");
+	testMenu->RegisterTest<test::TestUnlit3DCube>("3D unlit cube");
 
 	GLCall(std::cout << glGetString(GL_VERSION) << std::endl);
 

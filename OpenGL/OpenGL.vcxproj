@@ -173,9 +173,11 @@
     <ClCompile Include="src\VertexBuffer.cpp" />
     <ClCompile Include="src\VertexArray.cpp" />
     <ClCompile Include="src\Texture.cpp" />
+    <ClCompile Include="src\tests\TestUnlit3DCube.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shader\Basic.shader" />
+    <None Include="res\shader\UnlitColor.shader" />
     <None Include="src\vendor\glm\detail\func_common.inl" />
     <None Include="src\vendor\glm\detail\func_common_simd.inl" />
     <None Include="src\vendor\glm\detail\func_exponential.inl" />
@@ -615,6 +617,7 @@
     <ClInclude Include="src\VertexArray.h" />
     <ClInclude Include="src\VertexBufferLayout.h" />
     <ClInclude Include="src\Texture.h" />
+    <ClInclude Include="src\tests\TestUnlit3DCube.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
