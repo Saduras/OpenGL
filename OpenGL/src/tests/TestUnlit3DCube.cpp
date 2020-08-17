@@ -11,7 +11,7 @@ namespace test
 		: m_Proj(glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.f)),
 		m_View(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.25f, -3.0f)), 
 							glm::radians(30.0f), glm::vec3(1.0f, 0.0f, 0.0f))),
-		m_Model(1.0f)
+		m_Model(glm::rotate(glm::mat4(1.0f), glm::radians(30.0f), glm::vec3(0.0f, 1.0f, 0.0f)))
 	{
 		float positions[] = {
 			-0.5f, -0.5f, -0.5f, // 0
@@ -37,6 +37,12 @@ namespace test
 			// left face
 			4, 3, 0,
 			3, 7, 4,
+			// top face
+			3, 2, 6,
+			6, 7, 3,
+			// bottom face
+			0, 1, 5,
+			5, 4, 0, 
 		};
 
 		GLCall(glEnable(GL_BLEND));
