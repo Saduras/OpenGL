@@ -17,8 +17,10 @@ void main()
 {
 	gl_Position = u_Proj * u_View * u_Model * position;
 	v_TexCoord = texCoord;
-	v_Normal = normal;
-	v_FragPos = vec3(u_Model * position);
+
+	mat4 modelToWorld = transpose(inverse(u_Model));
+	v_Normal = mat3(modelToWorld) * normal;
+	v_FragPos = vec3(modelToWorld * position);
 };
 
 #shader fragment
