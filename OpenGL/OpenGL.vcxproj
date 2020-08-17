@@ -161,6 +161,7 @@
     <ClCompile Include="src\Renderer.cpp" />
     <ClCompile Include="src\tests\Test.cpp" />
     <ClCompile Include="src\tests\TestClearColor.cpp" />
+    <ClCompile Include="src\tests\TestDiffuseLighting.cpp" />
     <ClCompile Include="src\tests\TestTexture2D.cpp" />
     <ClCompile Include="src\tests\TestTexturedCube.cpp" />
     <ClCompile Include="src\vendor\glm\detail\glm.cpp" />
@@ -178,6 +179,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shader\Basic.shader" />
+    <None Include="res\shader\Diffuse.shader" />
     <None Include="res\shader\UnlitColor.shader" />
     <None Include="res\shader\UnlitTexture.shader" />
     <None Include="src\vendor\glm\detail\func_common.inl" />
@@ -323,6 +325,7 @@
     <ClInclude Include="src\Renderer.h" />
     <ClInclude Include="src\tests\Test.h" />
     <ClInclude Include="src\tests\TestClearColor.h" />
+    <ClInclude Include="src\tests\TestDiffuseLighting.h" />
     <ClInclude Include="src\tests\TestTexture2D.h" />
     <ClInclude Include="src\tests\TestTexturedCube.h" />
     <ClInclude Include="src\vendor\glm\common.hpp" />
