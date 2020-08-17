@@ -72,7 +72,7 @@ namespace test
 
 	void TestUnlit3DCube::OnUpdate(float deltaTime)
 	{
-		m_ModelAngle += 180.0f * deltaTime;
+		m_ModelAngle += 90.0f * deltaTime;
 	}
 		
 	void TestUnlit3DCube::OnRender()
