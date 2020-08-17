@@ -7,11 +7,11 @@
 
 namespace test
 {
-	TestUnlit3DCube::TestUnlit3DCube() 
+	TestUnlit3DCube::TestUnlit3DCube()
 		: m_Proj(glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.f)),
-		m_View(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.25f, -3.0f)), 
-							glm::radians(30.0f), glm::vec3(1.0f, 0.0f, 0.0f))),
-		m_Model(glm::rotate(glm::mat4(1.0f), glm::radians(30.0f), glm::vec3(0.0f, 1.0f, 0.0f)))
+		m_View(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.25f, -3.0f)),
+			glm::radians(30.0f), glm::vec3(1.0f, 0.0f, 0.0f))),
+		m_ModelAngle(0.0f)
 	{
 		float positions[] = {
 			-0.5f, -0.5f, -0.5f, // 0
@@ -70,6 +70,11 @@ namespace test
 	{
 	}
 
+	void TestUnlit3DCube::OnUpdate(float deltaTime)
+	{
+		m_ModelAngle += 180.0f * deltaTime;
+	}
+		
 	void TestUnlit3DCube::OnRender()
 	{
 		GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
@@ -77,7 +82,10 @@ namespace test
 
 		Renderer renderer;
 
-		glm::mat4 mvp = m_Proj * m_View * m_Model;
+		glm::mat4 model(1.0f);
+		model = glm::rotate(model, glm::radians(m_ModelAngle), glm::vec3(0.0f, 1.0f, 0.0f));
+
+		glm::mat4 mvp = m_Proj * m_View * model;
 
 		m_Shader->Bind();
 		m_Shader->SetUniformMat4f("u_MVP", mvp);

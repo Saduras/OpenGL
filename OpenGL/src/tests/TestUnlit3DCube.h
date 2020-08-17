@@ -20,11 +20,12 @@ namespace test
 
 		glm::mat4 m_Proj;
 		glm::mat4 m_View;
-		glm::mat4 m_Model;
+		float m_ModelAngle;
 	public:
 		TestUnlit3DCube();
 		~TestUnlit3DCube();
 
+		void OnUpdate(float deltaTime) override;
 		void OnRender() override;
 		void OnImGuiRender() override;
 	};
